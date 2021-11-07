@@ -1,18 +1,21 @@
-/* Øyvind Andersson -  06.11.21 */
-
 #include <Crutch.h>
 
-class SandboxApp : public Crutch::Application {
+class SandboxApp : public Crutch::Application 
+{
 public:
-	SandboxApp() {
+	SandboxApp() 
+	{
 
 	}
 
-	~SandboxApp() {
+	~SandboxApp() 
+	{
 
 	}
 };
 
-Crutch::Application* Crutch::CreateApplication() {
+/* Definition of the extern from Crutch engine */
+Crutch::Application* Crutch::CreateApplication() 
+{
 	return new SandboxApp();
 }

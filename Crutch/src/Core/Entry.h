@@ -10,7 +10,8 @@ extern Crutch::Application* Crutch::CreateApplication();
 /* 
 	Main entrypoint for windows platform 
 */
-int main( int argc, char** argv ) {
+int main( int argc, char** argv ) 
+{
 	auto app = Crutch::CreateApplication();
 	app->Run();
 	delete app;

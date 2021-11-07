@@ -4,7 +4,7 @@
 
 namespace Crutch {
 
-	class CHAPI Application
+	class CHAPI Application 
 	{
 	public:
 		Application();
@@ -13,7 +13,7 @@ namespace Crutch {
 		void Run();
 	};
 
-	// Client must define this
+	// Client will define this
 	Application* CreateApplication();
 }
 
