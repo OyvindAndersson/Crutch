@@ -14,6 +14,9 @@ namespace Crutch {
 
 	void Application::Run()
 	{
+		CH_LOG("Application running");
+		
+
 		while ( true );
 	}
 

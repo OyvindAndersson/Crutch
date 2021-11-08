@@ -70,7 +70,7 @@ project "Sandbox"
         "%{wks.location}/%{prj.name}/src/**.cpp"
     }
     includedirs {
-        "%{wks.location}/%{prj.name}/vendor/spdlog/include",
+        "%{wks.location}/Crutch/vendor/spdlog/include",
         "%{wks.location}/Crutch/src"
     }
     links {

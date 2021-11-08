@@ -1,4 +1,5 @@
 #pragma once
+#include <memory.h>
 
 #ifdef CH_PLATFORM_WINDOWS
 #ifdef CH_BUILD_DLL
@@ -10,3 +11,4 @@
 	#error Crutch Engine only supports windows
 #endif
 
+#include "Log.h"

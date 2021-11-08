@@ -25,4 +25,5 @@
 -------------------------------------------------------------------------------------------------*/
 
 #include "Core/Application.h"
+#include "Core/Log.h"
 #include "Core/Entry.h"					/* ENTRY POINT */
