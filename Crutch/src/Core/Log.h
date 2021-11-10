@@ -5,7 +5,7 @@
 
 namespace Crutch {
 
-	class CHAPI Log
+	class CHAPI CLog
 	{
 	public:
 		static void Init();
@@ -21,15 +21,15 @@ namespace Crutch {
 }
 
 // For logging inside core
-#define CH_CORE_LOG(...)	::Crutch::Log::GetCoreLogger()->trace(__VA_ARGS__)
-#define CH_CORE_INFO(...)	::Crutch::Log::GetCoreLogger()->info(__VA_ARGS__)
-#define CH_CORE_WARN(...)	::Crutch::Log::GetCoreLogger()->warn(__VA_ARGS__)
-#define CH_CORE_ERROR(...)	::Crutch::Log::GetCoreLogger()->error(__VA_ARGS__)
-#define CH_CORE_CRIT(...)	::Crutch::Log::GetCoreLogger()->critical(__VA_ARGS__)
+#define CH_CORE_LOG(...)	::Crutch::CLog::GetCoreLogger()->trace(__VA_ARGS__)
+#define CH_CORE_INFO(...)	::Crutch::CLog::GetCoreLogger()->info(__VA_ARGS__)
+#define CH_CORE_WARN(...)	::Crutch::CLog::GetCoreLogger()->warn(__VA_ARGS__)
+#define CH_CORE_ERROR(...)	::Crutch::CLog::GetCoreLogger()->error(__VA_ARGS__)
+#define CH_CORE_CRIT(...)	::Crutch::CLog::GetCoreLogger()->critical(__VA_ARGS__)
 
 // For logging by client
-#define CH_LOG(...)		::Crutch::Log::GetClientLogger()->trace(__VA_ARGS__)
-#define CH_INFO(...)	::Crutch::Log::GetClientLogger()->info(__VA_ARGS__)
-#define CH_WARN(...)	::Crutch::Log::GetClientLogger()->warn(__VA_ARGS__)
-#define CH_ERROR(...)	::Crutch::Log::GetClientLogger()->error(__VA_ARGS__)
-#define CH_CRIT(...)	::Crutch::Log::GetClientLogger()->critical(__VA_ARGS__)
+#define CH_LOG(...)			::Crutch::CLog::GetClientLogger()->trace(__VA_ARGS__)
+#define CH_INFO(...)		::Crutch::CLog::GetClientLogger()->info(__VA_ARGS__)
+#define CH_WARN(...)		::Crutch::CLog::GetClientLogger()->warn(__VA_ARGS__)
+#define CH_ERROR(...)		::Crutch::CLog::GetClientLogger()->error(__VA_ARGS__)
+#define CH_CRIT(...)		::Crutch::CLog::GetClientLogger()->critical(__VA_ARGS__)

@@ -11,4 +11,5 @@
 	#error Crutch Engine only supports windows
 #endif
 
+#include "Events/Event.h"
 #include "Log.h"

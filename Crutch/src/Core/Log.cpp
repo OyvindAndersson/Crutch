@@ -6,10 +6,10 @@
 namespace Crutch {
 
 	// Definitions
-	std::shared_ptr<spdlog::logger> Log::m_CoreLogger;
-	std::shared_ptr<spdlog::logger> Log::m_ClientLogger;
+	std::shared_ptr<spdlog::logger> CLog::m_CoreLogger;
+	std::shared_ptr<spdlog::logger> CLog::m_ClientLogger;
 
-	void Log::Init()
+	void CLog::Init()
 	{
 		std::vector<spdlog::sink_ptr> logSinks;
 		logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());

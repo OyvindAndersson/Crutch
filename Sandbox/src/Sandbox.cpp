@@ -1,21 +1,14 @@
 #include <Crutch.h>
 
-class SandboxApp : public Crutch::Application 
+class SandboxApp : public Crutch::CApplication 
 {
 public:
-	SandboxApp() 
-	{
-
-	}
-
-	~SandboxApp() 
-	{
-
-	}
+	SandboxApp() {}
+	~SandboxApp() {}
 };
 
 /* Definition of the extern from Crutch engine */
-Crutch::Application* Crutch::CreateApplication() 
+Crutch::CApplication* Crutch::CreateApplication() 
 {
 	return new SandboxApp();
 }

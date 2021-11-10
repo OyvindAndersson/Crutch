@@ -2,20 +2,19 @@
 
 namespace Crutch {
 
-	Application::Application()
+	CApplication::CApplication()
 	{
 
 	}
 
-	Application::~Application()
+	CApplication::~CApplication()
 	{
 
 	}
 
-	void Application::Run()
+	void CApplication::Run()
 	{
 		CH_LOG("Application running");
-		
 
 		while ( true );
 	}

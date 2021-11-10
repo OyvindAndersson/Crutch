@@ -4,16 +4,15 @@
 
 namespace Crutch {
 
-	class CHAPI Application 
+	class CHAPI CApplication 
 	{
 	public:
-		Application();
-		virtual ~Application();
+		CApplication();
+		virtual ~CApplication();
 
 		void Run();
 	};
 
 	// Client will define this
-	Application* CreateApplication();
+	CApplication* CreateApplication();
 }
-
