@@ -1,7 +1,5 @@
 #pragma once
 
-#ifdef CH_PLATFORM_WINDOWS
-
 #include "Core.h"
 
 /*  Will be defined in the Client app project */
@@ -19,5 +17,3 @@ int main( int argc, char** argv )
 	app->Run();
 	delete app;
 }
-
-#endif

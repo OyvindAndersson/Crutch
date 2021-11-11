@@ -4,7 +4,7 @@
 
 namespace Crutch {
 
-	class CHAPI CApplication 
+	class CApplication 
 	{
 	public:
 		CApplication();

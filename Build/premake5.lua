@@ -17,6 +17,7 @@ IncludeDir = {}
     IncludeDir["GLFW"] = "%{wks.location}/Crutch/vendor/GLFW/include"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
 group "Dependencies"
 	include (ROOT .. "Crutch/vendor/GLFW")
 group ""
@@ -52,8 +53,9 @@ project "Crutch"
         systemversion   "latest"
 
         defines { 
-            "CH_PLATFORM_WINDOWS", 
-            "CH_BUILD_DLL" 
+            --"CH_PLATFORM_WINDOWS", 
+            --"CH_BUILD_DLL" 
+            "GLFW_INCLUDE_NONE"
         }
         --postbuildcommands { 
             -- Copy the DLL into the sandbox .exe location. Must run initial build twice for the dir to exist.
@@ -73,7 +75,7 @@ project "Crutch"
 -- Sandbox Project (.exe)
 ----------------------------------
 project "Sandbox"
-    location "%{wks.location}//Sandbox"
+    location "%{wks.location}/Sandbox"
     kind     "ConsoleApp"
     language "C++"
     targetdir( "%{wks.location}/" .. bin_dir .. "/" .. outputdir .. "/%{prj.name}")
@@ -97,7 +99,7 @@ project "Sandbox"
         systemversion   "latest"
 
         defines { 
-            "CH_PLATFORM_WINDOWS"
+            --"CH_PLATFORM_WINDOWS"
         }
 
     filter "configurations:Debug"

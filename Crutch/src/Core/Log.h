@@ -5,7 +5,7 @@
 
 namespace Crutch {
 
-	class CHAPI CLog
+	class CLog
 	{
 	public:
 		static void Init();

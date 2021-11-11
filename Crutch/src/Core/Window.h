@@ -2,7 +2,7 @@
 
 #include "Core.h"
 
-class CHAPI CWindow
+class CWindow
 {
 public:
 	CWindow();
