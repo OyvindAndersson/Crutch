@@ -11,17 +11,26 @@ workspace           "Crutch"
     configurations  { "Debug", "Release" }
     platforms       { "x64" }
 	location		( ROOT )
+    flags           { "MultiProcessorCompile" }
 	
+IncludeDir = {}
+    IncludeDir["GLFW"] = "%{wks.location}/Crutch/vendor/GLFW/include"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+group "Dependencies"
+	include (ROOT .. "Crutch/vendor/GLFW")
+group ""
 
 ----------------------------------
 -- Crutch Project (.dll)
 ----------------------------------
 project "Crutch"
     location  "%{wks.location}/Crutch"
-    kind      "SharedLib"
+    --kind      "SharedLib"
+	kind 	  "StaticLib"
+	staticruntime "off"
     language  "C++"
+    cppdialect "C++17"
     targetdir( "%{wks.location}/" .. bin_dir .. "/" .. outputdir .. "/%{prj.name}") -- i.e: "../Bin/Debug-Windows-x86_64/Crutch"
     objdir   ( "%{wks.location}/" .. obj_dir .. "/" .. outputdir .. "/%{prj.name}") -- i.e: "../Bin-Int/Debug-Windows-x86_64/Crutch"
 
@@ -30,7 +39,12 @@ project "Crutch"
         "%{wks.location}/%{prj.name}/src/**.cpp"
     }
     includedirs {
-        "%{wks.location}/%{prj.name}/vendor/spdlog/include"
+		"%{wks.location}/%{prj.name}/src",
+        "%{wks.location}/%{prj.name}/vendor/spdlog/include",
+		"%{IncludeDir.GLFW}"
+    }
+    links {
+        "GLFW"
     }
     filter "system:windows"
         cppdialect      "C++17"
@@ -41,11 +55,11 @@ project "Crutch"
             "CH_PLATFORM_WINDOWS", 
             "CH_BUILD_DLL" 
         }
-        postbuildcommands { 
+        --postbuildcommands { 
             -- Copy the DLL into the sandbox .exe location. Must run initial build twice for the dir to exist.
             -- TODO Should figure out a premake way to avoid that? 
-            ( "{COPY} %{cfg.buildtarget.relpath} ../" .. bin_dir .. "/" .. outputdir .. "/Sandbox") 
-        }
+        --    ( "{COPY} %{cfg.buildtarget.relpath} ../" .. bin_dir .. "/" .. outputdir .. "/Sandbox") 
+        --}
 
     filter "configurations:Debug"
         defines     "CH_DEBUG"
