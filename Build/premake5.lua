@@ -1,7 +1,8 @@
 
 local ROOT = "../"
-local bin_dir = "Binaries"
-local obj_dir = "Binaries-Int"
+bin_dir = "Binaries"
+obj_dir = "Binaries-Int"
+
 ----------------------------------
 -- WORKSPACE
 ----------------------------------
@@ -13,13 +14,22 @@ workspace           "Crutch"
 	location		( ROOT )
     flags           { "MultiProcessorCompile" }
 	
+----------------------------------
+-- Assemble all vendor includes into a dict
+----------------------------------
 IncludeDir = {}
-    IncludeDir["GLFW"] = "%{wks.location}/Crutch/vendor/GLFW/include"
+IncludeDir["GLFW"] = "%{wks.location}/Crutch/vendor/GLFW/include"
+IncludeDir["GLAD"] = "%{wks.location}/Crutch/vendor/GLAD/include"
 
+-- The general folder-name rule for projects (i.e: "Debug-Windows-x64")
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-group "Dependencies"
+----------------------------------
+-- Include other vendor projects
+----------------------------------
+group "Thirdparty"
 	include (ROOT .. "Crutch/vendor/GLFW")
+	include (ROOT .. "Crutch/vendor/GLAD")
 group ""
 
 ----------------------------------
@@ -42,10 +52,13 @@ project "Crutch"
     includedirs {
 		"%{wks.location}/%{prj.name}/src",
         "%{wks.location}/%{prj.name}/vendor/spdlog/include",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.GLAD}"
     }
     links {
-        "GLFW"
+        "GLFW",
+        "GLAD",
+        "opengl32.lib"
     }
     filter "system:windows"
         cppdialect      "C++17"
