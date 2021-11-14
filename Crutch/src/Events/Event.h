@@ -1,15 +1,6 @@
 #pragma once
 
-
-//#include <functional>
-//#include <utility>
-//#include <type_traits>
-
-
-#include <utility>
-#include <type_traits>
-#include <functional>
-#include <vector>
+#include "chpch.h"
 
 namespace Crutch {
 

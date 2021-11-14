@@ -18,3 +18,6 @@
 # Build results
 **/Binaries/
 Binaries-Int/
+
+# Custom files
+helper.md

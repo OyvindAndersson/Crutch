@@ -14,6 +14,8 @@ int main( int argc, char** argv )
 	CH_CORE_INFO("Loggers initialized");
 
 	auto app = Crutch::CreateApplication();
+
 	app->Run();
+
 	delete app;
 }

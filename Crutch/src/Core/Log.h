@@ -1,21 +1,25 @@
 #pragma once
 
-#include "Core.h"
-#include <spdlog/spdlog.h>
+//#include "Core.h"
 
-namespace Crutch {
+#pragma warning(push, 0)
+#include <spdlog/spdlog.h>
+#pragma warning(pop)
+
+namespace Crutch 
+{
 
 	class CLog
 	{
 	public:
 		static void Init();
 
-		inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return m_CoreLogger; }
-		inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return m_ClientLogger; }
+		inline static TSharedPtr<spdlog::logger>& GetCoreLogger() { return m_CoreLogger; }
+		inline static TSharedPtr<spdlog::logger>& GetClientLogger() { return m_ClientLogger; }
 
 	private:
-		static std::shared_ptr<spdlog::logger> m_CoreLogger;
-		static std::shared_ptr<spdlog::logger> m_ClientLogger;
+		static TSharedPtr<spdlog::logger> m_CoreLogger;
+		static TSharedPtr<spdlog::logger> m_ClientLogger;
 	};
 
 }

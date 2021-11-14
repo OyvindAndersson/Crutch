@@ -24,6 +24,6 @@
 
 -------------------------------------------------------------------------------------------------*/
 
-#include "Core/Application.h"
+#include "Application/Generic/Application.h"
 #include "Core/Log.h"
-#include "Core/Entry.h"					/* ENTRY POINT */
+#include "Core/Launch.h"					/* ENTRY POINT */

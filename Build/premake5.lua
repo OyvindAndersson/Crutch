@@ -33,22 +33,30 @@ group "Thirdparty"
 group ""
 
 ----------------------------------
--- Crutch Project (.dll)
+-- Crutch Project
 ----------------------------------
 project "Crutch"
     location  "%{wks.location}/Crutch"
-    --kind      "SharedLib"
 	kind 	  "StaticLib"
 	staticruntime "off"
     language  "C++"
     cppdialect "C++17"
+
     targetdir( "%{wks.location}/" .. bin_dir .. "/" .. outputdir .. "/%{prj.name}") -- i.e: "../Bin/Debug-Windows-x86_64/Crutch"
     objdir   ( "%{wks.location}/" .. obj_dir .. "/" .. outputdir .. "/%{prj.name}") -- i.e: "../Bin-Int/Debug-Windows-x86_64/Crutch"
+
+    pchheader "chpch.h"
+    pchsource (ROOT .. "Crutch/src/chpch.cpp")
 
     files {
         "%{wks.location}/%{prj.name}/src/**.h",
         "%{wks.location}/%{prj.name}/src/**.cpp"
     }
+    defines {
+        "_CRT_SECURE_NO_WARNINGS",
+		"GLFW_INCLUDE_NONE"
+    }
+
     includedirs {
 		"%{wks.location}/%{prj.name}/src",
         "%{wks.location}/%{prj.name}/vendor/spdlog/include",
@@ -88,9 +96,12 @@ project "Crutch"
 -- Sandbox Project (.exe)
 ----------------------------------
 project "Sandbox"
-    location "%{wks.location}/Sandbox"
-    kind     "ConsoleApp"
-    language "C++"
+    location      "%{wks.location}/Sandbox"
+    kind          "ConsoleApp"
+    language      "C++"
+    cppdialect    "C++17"
+    staticruntime "On"
+
     targetdir( "%{wks.location}/" .. bin_dir .. "/" .. outputdir .. "/%{prj.name}")
     objdir   ( "%{wks.location}/" .. obj_dir .. "/" .. outputdir .. "/%{prj.name}")
 
@@ -107,18 +118,14 @@ project "Sandbox"
     }
 
     filter "system:windows"
-        cppdialect      "C++17"
-        staticruntime   "On"
         systemversion   "latest"
-
-        defines { 
-            --"CH_PLATFORM_WINDOWS"
-        }
 
     filter "configurations:Debug"
         defines     "CH_DEBUG"
+        runtime     "Debug"
         symbols     "On"
 
     filter "configurations:Release"
         defines     "CH_RELEASE"
+        runtime     "Release"
         optimize    "On"
