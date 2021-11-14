@@ -1,6 +1,3 @@
 [submodule "Crutch/vendor/spdlog"]
 	path = Crutch/vendor/spdlog
 	url = https://github.com/gabime/spdlog
-[submodule "Crutch/vendor/GLFW"]
-	path = Crutch/vendor/GLFW
-	url = https://github.com/OyvindAndersson/glfw
