@@ -15,6 +15,8 @@ namespace Crutch
 	private:
 		void Init( const FWindowProperties& properties );
 		void Shutdown();
+		
+		void Update() override;
 
 
 	public:
@@ -32,6 +34,7 @@ namespace Crutch
 		};
 
 		FWindowData m_wndData;
+		GLFWwindow* m_pWindow;
 	};
 
 }

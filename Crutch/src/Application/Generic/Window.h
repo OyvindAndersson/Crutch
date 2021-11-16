@@ -29,6 +29,8 @@ namespace Crutch
 		virtual uint32_t GetWidth() = 0;
 		virtual uint32_t GetHeight() = 0;
 
+		virtual void Update() = 0;
+
 		static TUniquePtr<IWindowInterface> Create( const FWindowProperties& properties = FWindowProperties() );
 	};
 

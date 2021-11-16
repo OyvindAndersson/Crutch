@@ -22,7 +22,7 @@
 #include <unordered_set>
 #include <string>
 
-#include <Core/Memory/Pointers.h>
+#include <Core/Pointers.h>
 
 #ifdef CH_PLATFORM_WINDOWS
 	#include <Windows.h>

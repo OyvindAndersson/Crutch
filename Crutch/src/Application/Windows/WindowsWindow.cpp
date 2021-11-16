@@ -1,6 +1,9 @@
 #include "chpch.h"
 #include "WindowsWindow.h"
 
+#include "GLFW/glfw3.h"
+#include "glad/glad.h"
+
 namespace Crutch
 {
 
@@ -8,7 +11,6 @@ namespace Crutch
 	{
 		Init( properties );
 	}
-
 	CWindowsWindow::~CWindowsWindow()
 	{
 		Shutdown();
@@ -21,6 +23,47 @@ namespace Crutch
 		m_wndData.Height = properties.Height;
 		m_wndData.VSync = true;
 
+		glfwInit();
+
+#ifdef CH_DEBUG
+		glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
+		glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 6 );
+		glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
+		//glfwWindowHint( GLFW_RESIZABLE, GL_TRUE );
+#endif
+
+		m_pWindow = glfwCreateWindow( 
+			m_wndData.Width, 
+			m_wndData.Height, 
+			m_wndData.Title.c_str(), 
+			nullptr, nullptr );
+
+		if ( !m_pWindow )
+		{
+			CH_CORE_ERROR( "Failed to create GLFW window!" );
+			glfwTerminate();
+			exit( 1 );
+		}
+
+		glfwMakeContextCurrent( m_pWindow );
+
+		// Bind events
+		glfwSetKeyCallback( m_pWindow, []( GLFWwindow* window, int key, int scancode, int action, int mode ) {
+			CH_CORE_LOG( "KEY  code: {0:d}, scancode: {1:d}, action: {2:d}, mode: {3:d}  ", key, scancode, action, mode );
+
+			if ( key == GLFW_KEY_ESCAPE && action == GLFW_PRESS )
+				glfwSetWindowShouldClose( window, GL_TRUE );
+			} );
+
+
+		if ( !( gladLoadGLLoader( (GLADloadproc)( glfwGetProcAddress ) ) ) )
+		{
+			CH_CORE_ERROR( "Failed to initialize OpenGL context" );
+			exit( 1 );
+		}
+
+		glViewport( 0, 0, m_wndData.Width, m_wndData.Height );
+		
 		// 1. Check if window count is zero, then init Glfw
 		// 2. If debug enabled, set glfwWindowHints
 		// 3. create window and increment window counter
@@ -35,6 +78,21 @@ namespace Crutch
 		// destroy window
 		// decrement window counter
 		// terminate glfw if counter zero
+		glfwDestroyWindow( m_pWindow );
+		glfwTerminate();
+	}
+
+	void CWindowsWindow::Update()
+	{
+		while ( !glfwWindowShouldClose( m_pWindow ) )
+		{
+			glfwPollEvents();
+
+			glClearColor( 0.2f, 0.25f, 0.3f, 1.0f );
+			glClear( GL_COLOR_BUFFER_BIT );
+
+			glfwSwapBuffers( m_pWindow );
+		}
 	}
 
 	unsigned int CWindowsWindow::GetWidth()
