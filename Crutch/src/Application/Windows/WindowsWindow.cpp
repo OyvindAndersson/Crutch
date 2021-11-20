@@ -1,5 +1,9 @@
 #include "chpch.h"
 #include "WindowsWindow.h"
+#include "Application/Generic/Application.h"
+
+#include "Core/Input.h"
+#include "Events/Events.h"
 
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
@@ -7,21 +11,18 @@
 namespace Crutch
 {
 
-	CWindowsWindow::CWindowsWindow( const FWindowProperties& properties )
+	CWindowsWindow::CWindowsWindow()
 	{
-		Init( properties );
+		m_pWindow = nullptr;
 	}
 	CWindowsWindow::~CWindowsWindow()
 	{
 		Shutdown();
 	}
 
-	void CWindowsWindow::Init( const FWindowProperties& properties )
+	void CWindowsWindow::Initialize( CApplication* const application, const FWindowDefinition& definition )
 	{
-		m_wndData.Title = properties.Title;
-		m_wndData.Width = properties.Width;
-		m_wndData.Height = properties.Height;
-		m_wndData.VSync = true;
+		m_windowDefinition = definition;
 
 		glfwInit();
 
@@ -32,12 +33,7 @@ namespace Crutch
 		//glfwWindowHint( GLFW_RESIZABLE, GL_TRUE );
 #endif
 
-		m_pWindow = glfwCreateWindow( 
-			m_wndData.Width, 
-			m_wndData.Height, 
-			m_wndData.Title.c_str(), 
-			nullptr, nullptr );
-
+		m_pWindow = glfwCreateWindow( m_windowDefinition.Width, m_windowDefinition.Height, m_windowDefinition.Title.c_str(), nullptr, nullptr );
 		if ( !m_pWindow )
 		{
 			CH_CORE_ERROR( "Failed to create GLFW window!" );
@@ -47,14 +43,56 @@ namespace Crutch
 
 		glfwMakeContextCurrent( m_pWindow );
 
-		// Bind events
-		glfwSetKeyCallback( m_pWindow, []( GLFWwindow* window, int key, int scancode, int action, int mode ) {
-			CH_CORE_LOG( "KEY  code: {0:d}, scancode: {1:d}, action: {2:d}, mode: {3:d}  ", key, scancode, action, mode );
+		//------------------------------------
+		// Set callbacks
 
-			if ( key == GLFW_KEY_ESCAPE && action == GLFW_PRESS )
-				glfwSetWindowShouldClose( window, GL_TRUE );
-			} );
+		glfwSetWindowUserPointer( m_pWindow,  this );
 
+		glfwSetKeyCallback( m_pWindow, []( GLFWwindow* window, int key, int scancode, int action, int mods ) {
+
+			CWindowsWindow* self = (CWindowsWindow*) glfwGetWindowUserPointer( window );
+			CH_CORE_ASSERT( self , "Native window was nullptr, which should never happen here.");
+
+			FModifierKeysState modState( ( mods & GLFW_MOD_SHIFT ) != 0, ( mods & GLFW_MOD_SHIFT ) != 0,
+										 ( mods & GLFW_MOD_CONTROL ) != 0, ( mods & GLFW_MOD_CONTROL ) != 0,
+										 ( mods & GLFW_MOD_ALT ) != 0, ( mods & GLFW_MOD_ALT ) != 0,
+										 ( mods & GLFW_MOD_CAPS_LOCK ) != 0 );
+
+			FKeyEvent event( FInput::Get().GetKeyFromCode( key ), modState, (EInputAction) action, false, scancode, key );
+			self->OnInputEvent.Invoke( event );
+		});
+
+		glfwSetMouseButtonCallback( m_pWindow, []( GLFWwindow* window, int button, int action, int mods ) {
+			CWindowsWindow* self = (CWindowsWindow*) glfwGetWindowUserPointer( window );
+			FModifierKeysState modState( ( mods & GLFW_MOD_SHIFT ) != 0, ( mods & GLFW_MOD_SHIFT ) != 0,
+										 ( mods & GLFW_MOD_CONTROL ) != 0, ( mods & GLFW_MOD_CONTROL ) != 0,
+										 ( mods & GLFW_MOD_ALT ) != 0, ( mods & GLFW_MOD_ALT ) != 0,
+										 ( mods & GLFW_MOD_CAPS_LOCK ) != 0 );
+
+			FKeyEvent event( FInput::Get().GetKeyFromCode( button ), modState, (EInputAction)action, false, 0, button );
+			self->OnInputEvent.Invoke( event );
+		});
+
+		glfwSetCursorPosCallback( m_pWindow, [](GLFWwindow* pWindow, double xPos, double yPos) {
+			CWindowsWindow* self = (CWindowsWindow*) glfwGetWindowUserPointer( pWindow );
+			CH_CORE_ASSERT( self, "Native window was nullptr, which should never happen here." );
+
+			FCursorEvent event( EKeys::Mouse2D, xPos, yPos );
+			self->OnInputEvent.Invoke( event );
+		} );
+
+		glfwSetWindowMaximizeCallback( m_pWindow, []( GLFWwindow* window, int maximized ) {
+			CWindowsWindow* self = (CWindowsWindow*) glfwGetWindowUserPointer( window );
+			self->OnWindowEvent.Invoke( FWindowMaximizeEvent( !maximized ) );
+		} );
+
+		glfwSetWindowSizeCallback( m_pWindow, []( GLFWwindow* pWindow, int width, int height ) {
+			CH_CORE_LOG( "Window size event: w{0}, h{1}", width, height );
+
+			glClearColor( 0.2f, 0.25f, 0.3f, 1.0f );
+			glClear( GL_COLOR_BUFFER_BIT );
+			glfwSwapBuffers( pWindow );
+		} );
 
 		if ( !( gladLoadGLLoader( (GLADloadproc)( glfwGetProcAddress ) ) ) )
 		{
@@ -62,15 +100,7 @@ namespace Crutch
 			exit( 1 );
 		}
 
-		glViewport( 0, 0, m_wndData.Width, m_wndData.Height );
-		
-		// 1. Check if window count is zero, then init Glfw
-		// 2. If debug enabled, set glfwWindowHints
-		// 3. create window and increment window counter
-		// 4. set context, and init
-		// 5. glfwSetWindowUserPointer window - data
-		// 6. Set vsync true
-		// 7. Set glfw callbacks -- size, close, key, mouse, char, scroll, cursor
+
 	}
 
 	void CWindowsWindow::Shutdown()
@@ -84,25 +114,22 @@ namespace Crutch
 
 	void CWindowsWindow::Update()
 	{
-		while ( !glfwWindowShouldClose( m_pWindow ) )
-		{
-			glfwPollEvents();
+		glfwPollEvents();
 
-			glClearColor( 0.2f, 0.25f, 0.3f, 1.0f );
-			glClear( GL_COLOR_BUFFER_BIT );
+		glClearColor( 0.2f, 0.25f, 0.3f, 1.0f );
+		glClear( GL_COLOR_BUFFER_BIT );
 
-			glfwSwapBuffers( m_pWindow );
-		}
+		glfwSwapBuffers( m_pWindow );
 	}
 
 	unsigned int CWindowsWindow::GetWidth()
 	{
-		return m_wndData.Width;
+		return m_windowDefinition.Width;
 	}
 
 	unsigned int CWindowsWindow::GetHeight()
 	{
-		return m_wndData.Height;
+		return m_windowDefinition.Height;
 	}
 
 }

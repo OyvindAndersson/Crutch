@@ -35,4 +35,5 @@ namespace Crutch
 	template<typename Type>
 	using TWeakPtr = std::weak_ptr<Type>;
 
+
 }

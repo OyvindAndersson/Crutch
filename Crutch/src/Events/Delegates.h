@@ -4,45 +4,45 @@
 
 namespace Crutch {
 
-#define DECLARE_DELEGATE(delegateName)												typedef Delegate<void()> delegateName
-#define DECLARE_DELEGATE_OneParam(delegateName, par0)								typedef Delegate<void(par0)> delegateName
-#define DECLARE_DELEGATE_TwoParam(delegateName, par0, par1)							typedef Delegate<void(par0, par1)> delegateName
+#define DECLARE_DELEGATE(delegateName)												typedef TDelegate<void()> delegateName
+#define DECLARE_DELEGATE_OneParam(delegateName, par0)								typedef TDelegate<void(par0)> delegateName
+#define DECLARE_DELEGATE_TwoParam(delegateName, par0, par1)							typedef TDelegate<void(par0, par1)> delegateName
+																							
+#define DECLARE_DELEGATE_RetVal(delegateName, ret)									typedef TDelegate<ret()> delegateName
+#define DECLARE_DELEGATE_RetVal_OneParam(delegateName, ret, par0)					typedef TDelegate<ret(par0)> delegateName
+#define DECLARE_DELEGATE_RetVal_TwoParam(delegateName, ret, par0, par1)				typedef TDelegate<ret(par0, par1)> delegateName
 
-#define DECLARE_DELEGATE_RetVal(delegateName, ret)									typedef Delegate<ret()> delegateName
-#define DECLARE_DELEGATE_RetVal_OneParam(delegateName, ret, par0)					typedef Delegate<ret(par0)> delegateName
-#define DECLARE_DELEGATE_RetVal_TwoParam(delegateName, ret, par0, par1)				typedef Delegate<ret(par0, par1)> delegateName
+#define DECLARE_MULTICAST_DELEGATE(delegateName)									typedef TMulticastDelegate<void()> delegateName
+#define DECLARE_MULTICAST_DELEGATE_OneParam(delegateName, par0)						typedef TMulticastDelegate<void(par0)> delegateName
+#define DECLARE_MULTICAST_DELEGATE_TwoParam(delegateName, par0, par1)				typedef TMulticastDelegate<void(par0, par1)> delegateName
 
-#define DECLARE_MULTICAST_DELEGATE(delegateName)									typedef MulticastDelegate<void()> delegateName
-#define DECLARE_MULTICAST_DELEGATE_OneParam(delegateName, par0)						typedef MulticastDelegate<void(par0)> delegateName
-#define DECLARE_MULTICAST_DELEGATE_TwoParam(delegateName, par0, par1)				typedef MulticastDelegate<void(par0, par1)> delegateName
-
-#define DECLARE_MULTICAST_DELEGATE_RetVal(delegateName, ret)						typedef MulticastDelegate<ret()> delegateName
-#define DECLARE_MULTICAST_DELEGATE_RetVal_OneParam(delegateName, ret, par0)			typedef MulticastDelegate<ret(par0)> delegateName
-#define DECLARE_MULTICAST_DELEGATE_RetVal_TwoParam(delegateName, ret, par0, par1)	typedef MulticastDelegate<ret(par0, par1)> delegateName
+#define DECLARE_MULTICAST_DELEGATE_RetVal(delegateName, ret)						typedef TMulticastDelegate<ret()> delegateName
+#define DECLARE_MULTICAST_DELEGATE_RetVal_OneParam(delegateName, ret, par0)			typedef TMulticastDelegate<ret(par0)> delegateName
+#define DECLARE_MULTICAST_DELEGATE_RetVal_TwoParam(delegateName, ret, par0, par1)	typedef TMulticastDelegate<ret(par0, par1)> delegateName
 
 	template <typename Signature>
-	class Delegate;
+	class TDelegate;
 
 	/**** namespace scope swap function ****/
 	template <typename Signature>
-	void swap(Delegate<Signature>& d1, Delegate<Signature>& d2)
+	void swap( TDelegate<Signature>& d1, TDelegate<Signature>& d2)
 	{
 		d1.Swap(d2);
 	}
 
 	/**** delegate partial class template for function types ****/
 	template <typename Ret, typename... Args>
-	class Delegate<Ret(Args...)>
+	class TDelegate<Ret(Args...)>
 	{
 	public:
-		Delegate();
-		Delegate(Delegate const& other);	// copy
-		Delegate(Delegate&& other);			// move
+		TDelegate();
+		TDelegate( TDelegate const& other);	// copy
+		TDelegate( TDelegate&& other);			// move
 
-		~Delegate();
+		~TDelegate();
 
-		Delegate& operator=(Delegate const& other);	// assign existing
-		Delegate& operator=(Delegate&& other);		// move existing
+		TDelegate& operator=( TDelegate const& other);	// assign existing
+		TDelegate& operator=( TDelegate&& other);		// move existing
 
 		template <auto FreeFunction>
 		void Bind();						// .Bind<MyFreeFunction>();
@@ -53,7 +53,7 @@ namespace Crutch {
 		template <typename Type>
 		void Bind(Type&& funObj);			// .Bind( lambda )
 
-		void Swap(Delegate& other);
+		void Swap( TDelegate& other);
 
 		explicit operator bool() const { return m_Function; }
 
@@ -69,9 +69,9 @@ namespace Crutch {
 
 		bool m_isStored = false;
 
-		using DestroyStorageFunction = void(*)(Delegate*);
-		using CopyStorageFunction	 = void(*)(const Delegate*, Delegate*);
-		using MoveStorageFunction	 = void(*)(Delegate*, Delegate*);
+		using DestroyStorageFunction = void(*)( TDelegate*);
+		using CopyStorageFunction	 = void(*)(const TDelegate*, TDelegate*);
+		using MoveStorageFunction	 = void(*)( TDelegate*, TDelegate*);
 
 		DestroyStorageFunction  m_DestroyStorage = nullptr;
 		CopyStorageFunction		m_CopyStorage = nullptr;
@@ -79,26 +79,26 @@ namespace Crutch {
 
 		/**** helper function templates for special member functions ****/
 		template <typename Type>
-		static void DestroyStorage(Delegate* delegate)
+		static void DestroyStorage( TDelegate* delegate)
 		{
 			reinterpret_cast<Type*>(&delegate->m_data)->~Type();
 		}
 
 		template <typename Type>
-		static void CopyStorage(const Delegate* src, Delegate* dst)
+		static void CopyStorage(const TDelegate* src, TDelegate* dst)
 		{
 			new(&dst->m_data) Type(*reinterpret_cast<const Type*>(&src->m_data));
 		}
 
 		template <typename Type>
-		static void MoveStorage(Delegate* src, Delegate* dst)
+		static void MoveStorage( TDelegate* src, TDelegate* dst)
 		{
 			new(&dst->m_data) Type(std::move(*reinterpret_cast<Type*>(&src->m_data)));
 		}
 	};
 
 	template <typename Ret, typename... Args>
-	Delegate<Ret(Args...)>::Delegate()
+	TDelegate<Ret(Args...)>::TDelegate()
 	{
 		new(&m_data) std::nullptr_t(nullptr);
 
@@ -106,7 +106,7 @@ namespace Crutch {
 	}
 
 	template <typename Ret, typename... Args>
-	Delegate<Ret(Args...)>::Delegate(Delegate const& other)
+	TDelegate<Ret(Args...)>::TDelegate( TDelegate const& other)
 	{
 		if (other.m_isStored)
 		{
@@ -125,7 +125,7 @@ namespace Crutch {
 	}
 
 	template <typename Ret, typename... Args>
-	Delegate<Ret(Args...)>::Delegate(Delegate&& other)
+	TDelegate<Ret(Args...)>::TDelegate( TDelegate&& other)
 	{
 		if (other.m_isStored)
 		{
@@ -144,25 +144,25 @@ namespace Crutch {
 	}
 
 	template <typename Ret, typename... Args>
-	Delegate<Ret(Args...)>::~Delegate()
+	TDelegate<Ret(Args...)>::~TDelegate()
 	{
 		if (m_isStored)
 			m_DestroyStorage(this);
 	}
 
 	template <typename Ret, typename... Args>
-	Delegate<Ret(Args...)>& Delegate<Ret(Args...)>::operator=(Delegate const& other)
+	TDelegate<Ret(Args...)>& TDelegate<Ret(Args...)>::operator=( TDelegate const& other)
 	{
-		Delegate temp(other);
+		TDelegate temp(other);
 		Swap(temp);
 
 		return *this;
 	}
 
 	template <typename Ret, typename... Args>
-	Delegate<Ret(Args...)>& Delegate<Ret(Args...)>::operator=(Delegate&& other)
+	TDelegate<Ret(Args...)>& TDelegate<Ret(Args...)>::operator=( TDelegate&& other)
 	{
-		Delegate temp(std::move(other));
+		TDelegate temp(std::move(other));
 		Swap(temp);
 
 		return *this;
@@ -170,7 +170,7 @@ namespace Crutch {
 
 	template <typename Ret, typename... Args>
 	template <auto FreeFunction>
-	void Delegate<Ret(Args...)>::Bind()
+	void TDelegate<Ret(Args...)>::Bind()
 	{
 		new(&m_data) std::nullptr_t(nullptr);
 
@@ -182,7 +182,7 @@ namespace Crutch {
 
 	template <typename Ret, typename... Args>
 	template <auto Callable, typename Type>
-	void Delegate<Ret(Args...)>::Bind(Type& instance)
+	void TDelegate<Ret(Args...)>::Bind(Type& instance)
 	{
 		new(&m_data) Type* (&instance);
 
@@ -196,7 +196,7 @@ namespace Crutch {
 
 	template <typename Ret, typename... Args>
 	template <typename Type>
-	void Delegate<Ret(Args...)>::Bind(Type&& funObj)
+	void TDelegate<Ret(Args...)>::Bind(Type&& funObj)
 	{
 		static_assert(sizeof(Type) <= sizeof(void*));
 
@@ -227,19 +227,19 @@ namespace Crutch {
 	}
 
 	template <typename Ret, typename... Args>
-	Ret Delegate<Ret(Args...)>::operator()(Args... args)
+	Ret TDelegate<Ret(Args...)>::operator()(Args... args)
 	{
 		return m_Function(&m_data, std::forward<Args>(args)...);
 	}
 
 	template <typename Ret, typename... Args>
-	Ret Delegate<Ret(Args...)>::Invoke(Args... args)
+	Ret TDelegate<Ret(Args...)>::Invoke(Args... args)
 	{
 		return m_Function(&m_data, std::forward<Args>(args)...);
 	}
 
 	template <typename Ret, typename... Args>
-	void Delegate<Ret(Args...)>::Swap(Delegate& other)
+	void TDelegate<Ret(Args...)>::Swap( TDelegate& other)
 	{
 		if (other.m_isStored)
 			other.m_CopyStorage(&other, this);
@@ -270,13 +270,13 @@ namespace Crutch {
 	//-------------------------------------------------------------------------------------
 
 	template <typename Signature>
-	class MulticastDelegate;
+	class TMulticastDelegate;
 
 	template <typename Ret, typename... Args>
-	class MulticastDelegate<Ret(Args...)>
+	class TMulticastDelegate<Ret(Args...)>
 	{
 	public:
-		MulticastDelegate(std::size_t size = 10U) { m_delegates.reserve(size); }
+		TMulticastDelegate(std::size_t size = 10U) { m_delegates.reserve(size); }
 
 		template <auto Callable>
 		void Bind();
@@ -292,14 +292,14 @@ namespace Crutch {
 		void operator()(Args... args) { for (auto& delegate : m_delegates) delegate(std::forward<Args>(args)...); }
 		void Invoke(Args... args) { for (auto& delegate : m_delegates) delegate.Invoke(std::forward<Args>(args)...); }
 	private:
-		std::vector<Delegate<Ret(Args...)>> m_delegates;
+		std::vector<TDelegate<Ret(Args...)>> m_delegates;
 	};
 
 	template <typename Ret, typename... Args>
 	template <auto Callable>
-	void MulticastDelegate<Ret(Args...)>::Bind()
+	void TMulticastDelegate<Ret(Args...)>::Bind()
 	{
-		Delegate<Ret(Args...)> delegate;
+		TDelegate<Ret(Args...)> delegate;
 		m_delegates.push_back(delegate);
 
 		m_delegates.back().template Bind<Callable>();
@@ -307,9 +307,9 @@ namespace Crutch {
 
 	template <typename Ret, typename... Args>
 	template <auto Callable, typename Type>
-	void MulticastDelegate<Ret(Args...)>::Bind(Type& instance)
+	void TMulticastDelegate<Ret(Args...)>::Bind(Type& instance)
 	{
-		Delegate<Ret(Args...)> delegate;
+		TDelegate<Ret(Args...)> delegate;
 		m_delegates.push_back(delegate);
 
 		m_delegates.back().template Bind<Callable>(instance);
@@ -317,9 +317,9 @@ namespace Crutch {
 
 	template <typename Ret, typename... Args>
 	template <typename Type>
-	void MulticastDelegate<Ret(Args...)>::Bind(Type&& funObj)
+	void TMulticastDelegate<Ret(Args...)>::Bind(Type&& funObj)
 	{
-		Delegate<Ret(Args...)> delegate;
+		TDelegate<Ret(Args...)> delegate;
 		m_delegates.push_back(delegate);
 
 		m_delegates.back().Bind(std::forward<Type>(funObj));

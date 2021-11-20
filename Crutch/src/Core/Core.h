@@ -30,6 +30,6 @@
 #define CH_EXPAND_MACRO(x) x
 #define CH_STRINGIFY_MACRO(x) #x
 
-#include "Events/Event.h"
+#include "Events/Delegates.h"
 #include "Core/Log.h"
 #include "Core/Assert.h"
