@@ -10,7 +10,7 @@ namespace Crutch
 	DECLARE_DELEGATE_OneParam( FWindowEventDelegate, FWindowEvent& );
 
 	//--------------------------------------------------
-	// Defines typical properties of a window (size and settings)
+	// Defines typical properties of a window (size and title)
 	//--------------------------------------------------
 	struct FWindowDefinition
 	{
@@ -18,8 +18,11 @@ namespace Crutch
 		uint32_t Height;
 		std::string Title;
 
-		FWindowDefinition( const std::string& title = "Crutch Engine", uint32_t width = 1280, uint32_t height = 720 ) :
-			Width( width ), Height( height ), Title( title ) { }
+		FWindowDefinition( const std::string& title = "Crutch Engine", uint32_t width = 1280, uint32_t height = 720 ) 
+			: Width( width )
+			, Height( height )
+			, Title( title ) 
+		{ }
 	};
 
 	//--------------------------------------------------
@@ -30,14 +33,13 @@ namespace Crutch
 	public:
 		virtual ~IWindowInterface() = default;
 
-		virtual void Initialize( class CApplication* const application, const FWindowDefinition& definition ) = 0;
+		virtual void Initialize( const FWindowDefinition& definition ) = 0;
 		virtual void Update() = 0;
 
 	public:
 		FInputEventDelegate OnInputEvent;
 		FWindowEventDelegate OnWindowEvent;
 
-	public:
 		virtual uint32_t GetWidth() = 0;
 		virtual uint32_t GetHeight() = 0;
 		virtual void* GetNativeWindow() const = 0;

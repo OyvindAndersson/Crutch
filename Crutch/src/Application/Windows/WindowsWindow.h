@@ -19,7 +19,7 @@ namespace Crutch
 		virtual ~CWindowsWindow();
 
 	private:
-		void Initialize( class CApplication* const application, const FWindowDefinition& definition ) override;
+		void Initialize( const FWindowDefinition& definition ) override;
 		void Shutdown();
 		void Update() override;
 

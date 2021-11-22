@@ -10,30 +10,29 @@
 
 namespace Crutch
 {
-
 	CWindowsWindow::CWindowsWindow()
 	{
 		m_pWindow = nullptr;
 	}
+
 	CWindowsWindow::~CWindowsWindow()
 	{
 		Shutdown();
 	}
 
-	void CWindowsWindow::Initialize( CApplication* const application, const FWindowDefinition& definition )
+	void CWindowsWindow::Initialize( const FWindowDefinition& definition )
 	{
 		m_windowDefinition = definition;
 
 		glfwInit();
 
-#ifdef CH_DEBUG
 		glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
 		glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 6 );
 		glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
-		//glfwWindowHint( GLFW_RESIZABLE, GL_TRUE );
-#endif
 
+		// Create window and context handle
 		m_pWindow = glfwCreateWindow( m_windowDefinition.Width, m_windowDefinition.Height, m_windowDefinition.Title.c_str(), nullptr, nullptr );
+
 		if ( !m_pWindow )
 		{
 			CH_CORE_ERROR( "Failed to create GLFW window!" );
@@ -43,7 +42,20 @@ namespace Crutch
 
 		glfwMakeContextCurrent( m_pWindow );
 
-		//------------------------------------
+		// This must be called *after* we have set the context
+		if ( !( gladLoadGLLoader( (GLADloadproc)glfwGetProcAddress ) ) )
+		{
+			CH_CORE_ERROR( "Failed to initialize OpenGL context" );
+			exit( 1 );
+		}
+
+		CH_CORE_INFO( "OpenGL initialized" );
+		CH_CORE_INFO( "-----------------------------" );
+		CH_CORE_INFO( "  Vendor  : {0}", glGetString(GL_VENDOR) );
+		CH_CORE_INFO( "  Renderer: {0}", glGetString(GL_RENDERER) );
+		CH_CORE_INFO( "  Version : {0}", glGetString(GL_VERSION) );
+		CH_CORE_INFO( "-----------------------------" );
+
 		// Set callbacks
 
 		glfwSetWindowUserPointer( m_pWindow,  this );
@@ -93,13 +105,6 @@ namespace Crutch
 			glClear( GL_COLOR_BUFFER_BIT );
 			glfwSwapBuffers( pWindow );
 		} );
-
-		if ( !( gladLoadGLLoader( (GLADloadproc)( glfwGetProcAddress ) ) ) )
-		{
-			CH_CORE_ERROR( "Failed to initialize OpenGL context" );
-			exit( 1 );
-		}
-
 
 	}
 

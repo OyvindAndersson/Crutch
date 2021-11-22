@@ -11,7 +11,6 @@ namespace Crutch {
 
 	//--------------------------------------------------
 	// Generic definition of the application.
-	// For now it depends on OpenGL.
 	//--------------------------------------------------
 
 	CApplication::CApplication( const std::string& name )
@@ -20,11 +19,9 @@ namespace Crutch {
 		s_Instance = this;
 
 		m_window = IWindowInterface::Create();
-		m_window->Initialize( this, FWindowDefinition( name ) );
+		m_window->Initialize( FWindowDefinition( name ) );
 		m_window->OnInputEvent.Bind<&CApplication::OnInputEvent>( *this );
 		m_window->OnWindowEvent.Bind<&CApplication::OnWindowEvent>( *this );
-
-		// m_window set event callback
 
 		// Renderer init
 	}
@@ -53,9 +50,11 @@ namespace Crutch {
 	{
 		if ( event.IsKeyEvent() )
 		{
-
 			FKeyEvent& keyEvent = (FKeyEvent&)event;
-			CH_CORE_INFO( "Event: {0}, Key name: {1}, Shift mod: {2}, Ctrl mod: {3}", 
+
+			// TODO Push event to layers
+
+			CH_CORE_LOG( "Event: {0}, Key name: {1}, Shift mod: {2}, Ctrl mod: {3}", 
 						  keyEvent.GetKeyCode(), 
 						  keyEvent.GetKey().GetName(), 
 						  keyEvent.GetModifierKeys().IsShiftDown(),
@@ -64,10 +63,14 @@ namespace Crutch {
 		else if ( event.IsCursorEvent() )
 		{
 			FCursorEvent& cursorEvent = (FCursorEvent&) event;
+
+			// TODO Push event to layers
+
+			/*
 			CH_CORE_INFO( "Key name: {0}, Pox X: {1}, Pos Y: {2}",
 						  cursorEvent.GetKey().GetName(),
 						  cursorEvent.GetPosX(),
-						  cursorEvent.GetPosY());
+						  cursorEvent.GetPosY());*/
 		}
 		
 	}
