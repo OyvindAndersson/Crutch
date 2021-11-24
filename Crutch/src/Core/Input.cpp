@@ -15,6 +15,16 @@ namespace Crutch
 		return state == EInputAction::Pressed || state == EInputAction::Repeat;
 	}
 
+	const glm::vec2 CInput::GetMousePos() const
+	{
+		auto pWindow = static_cast<GLFWwindow*>( CApplication::Get().GetWindow().GetNativeWindow() );
+		double xpos, ypos;
+		glfwGetCursorPos( pWindow, &xpos, &ypos );
+
+		return glm::vec2( { xpos, ypos } );
+
+	}
+
 // 	const Crutch::FVector2D& CInput::GetMousePos()
 // 	{
 // 		auto pWindow = static_cast<GLFWwindow*>( CApplication::Get().GetWindow().GetNativeWindow() );

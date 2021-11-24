@@ -115,7 +115,8 @@ project "Sandbox"
     }
     includedirs {
         "%{wks.location}/Crutch/vendor/spdlog/include",
-        "%{wks.location}/Crutch/src"
+        "%{wks.location}/Crutch/src",
+		"%{IncludeDir.glm}"
     }
     links {
         "Crutch"

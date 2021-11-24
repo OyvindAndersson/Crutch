@@ -13,5 +13,5 @@
 
 namespace Crutch
 {
-	typedef FVector2D glm::vec2;
+	
 }

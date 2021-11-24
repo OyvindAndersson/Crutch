@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Math/CrutchMath.h"
+
 namespace Crutch
 {
 	//--------------------------------------------------
@@ -192,6 +194,8 @@ namespace Crutch
 		static CInput& Get() { return *m_instance; }
 
 		bool IsKeyPressed( const EKeyCode& key );
+		const glm::vec2 GetMousePos() const;
+
 		//const FVector2D& GetMousePos();
 
 	private:
