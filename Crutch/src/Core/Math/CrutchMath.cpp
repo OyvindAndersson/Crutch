@@ -10,6 +10,10 @@ namespace Crutch
 
 	const FVector2D FVector2D::ZeroVector( 0.0f, 0.0f );
 
+	const FMatrix FMatrix::IdentityMatrix( FPlane( 1.0f, 0.0f, 0.0f, 0.0f ),
+										   FPlane( 0.0f, 1.0f, 0.0f, 0.0f ),
+										   FPlane( 0.0f, 0.0f, 1.0f, 0.0f ),
+										   FPlane( 0.0f, 0.0f, 0.0f, 1.0f ) );
 
 	//--------------------------------------------------
 	// Other math helpers

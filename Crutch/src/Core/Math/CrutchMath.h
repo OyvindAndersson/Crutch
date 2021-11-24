@@ -5,4 +5,5 @@
 //--------------------------------------------------
 
 #include "MathUtils.h"
+#include "Matrix.h"
 #include "Vector2D.h"
