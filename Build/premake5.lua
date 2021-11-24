@@ -20,6 +20,7 @@ workspace           "Crutch"
 IncludeDir = {}
 IncludeDir["GLFW"] = "%{wks.location}/Crutch/vendor/GLFW/include"
 IncludeDir["GLAD"] = "%{wks.location}/Crutch/vendor/GLAD/include"
+IncludeDir["glm"] = "%{wks.location}/Crutch/vendor/glm"
 
 -- The general folder-name rule for projects (i.e: "Debug-Windows-x64")
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
@@ -50,7 +51,9 @@ project "Crutch"
 
     files {
         "%{wks.location}/%{prj.name}/src/**.h",
-        "%{wks.location}/%{prj.name}/src/**.cpp"
+        "%{wks.location}/%{prj.name}/src/**.cpp",
+        "%{wks.location}/%{prj.name}/vendor/glm/glm/**.hpp",
+        "%{wks.location}/%{prj.name}/vendor/glm/glm/**.inl"
     }
     defines {
         "_CRT_SECURE_NO_WARNINGS",
@@ -61,7 +64,8 @@ project "Crutch"
 		"%{wks.location}/%{prj.name}/src",
         "%{wks.location}/%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.GLAD}"
+		"%{IncludeDir.GLAD}",
+		"%{IncludeDir.glm}"
     }
     links {
         "GLFW",

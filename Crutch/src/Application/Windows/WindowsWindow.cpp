@@ -65,32 +65,28 @@ namespace Crutch
 			CWindowsWindow* self = (CWindowsWindow*) glfwGetWindowUserPointer( window );
 			CH_CORE_ASSERT( self , "Native window was nullptr, which should never happen here.");
 
-			FModifierKeysState modState( ( mods & GLFW_MOD_SHIFT ) != 0, ( mods & GLFW_MOD_SHIFT ) != 0,
-										 ( mods & GLFW_MOD_CONTROL ) != 0, ( mods & GLFW_MOD_CONTROL ) != 0,
-										 ( mods & GLFW_MOD_ALT ) != 0, ( mods & GLFW_MOD_ALT ) != 0,
-										 ( mods & GLFW_MOD_CAPS_LOCK ) != 0 );
+			FModifierKeyState modState( (mods & GLFW_MOD_SHIFT) != 0,(mods & GLFW_MOD_CONTROL) != 0, (mods & GLFW_MOD_ALT) != 0, (mods & GLFW_MOD_CAPS_LOCK) != 0 );
+			FKeyEvent event( (EKeyCode) key, (EInputAction) action, modState, scancode );
 
-			FKeyEvent event( FInput::Get().GetKeyFromCode( key ), modState, (EInputAction) action, false, scancode, key );
 			self->OnInputEvent.Invoke( event );
 		});
 
+		glfwSetCharCallback( m_pWindow, []( GLFWwindow* pWindow, unsigned int codepoint ) {
+			// UTF-32
+			CH_CORE_LOG( "Char key: {0}", codepoint );
+		} );
+
 		glfwSetMouseButtonCallback( m_pWindow, []( GLFWwindow* window, int button, int action, int mods ) {
 			CWindowsWindow* self = (CWindowsWindow*) glfwGetWindowUserPointer( window );
-			FModifierKeysState modState( ( mods & GLFW_MOD_SHIFT ) != 0, ( mods & GLFW_MOD_SHIFT ) != 0,
-										 ( mods & GLFW_MOD_CONTROL ) != 0, ( mods & GLFW_MOD_CONTROL ) != 0,
-										 ( mods & GLFW_MOD_ALT ) != 0, ( mods & GLFW_MOD_ALT ) != 0,
-										 ( mods & GLFW_MOD_CAPS_LOCK ) != 0 );
 
-			FKeyEvent event( FInput::Get().GetKeyFromCode( button ), modState, (EInputAction)action, false, 0, button );
+			FModifierKeyState modState( ( mods & GLFW_MOD_SHIFT ) != 0, ( mods & GLFW_MOD_CONTROL ) != 0, ( mods & GLFW_MOD_ALT ) != 0, ( mods & GLFW_MOD_CAPS_LOCK ) != 0 );
+			FMouseEvent event( static_cast<EMouseCode>( button ), static_cast<EInputAction>( action ), modState );
 			self->OnInputEvent.Invoke( event );
 		});
 
 		glfwSetCursorPosCallback( m_pWindow, [](GLFWwindow* pWindow, double xPos, double yPos) {
 			CWindowsWindow* self = (CWindowsWindow*) glfwGetWindowUserPointer( pWindow );
-			CH_CORE_ASSERT( self, "Native window was nullptr, which should never happen here." );
-
-			FCursorEvent event( EKeys::Mouse2D, xPos, yPos );
-			self->OnInputEvent.Invoke( event );
+			//self->OnInputEvent.Invoke( event );
 		} );
 
 		glfwSetWindowMaximizeCallback( m_pWindow, []( GLFWwindow* window, int maximized ) {

@@ -7,93 +7,52 @@ namespace Crutch
 	//--------------------------------------------------
 	// Input type events
 	//--------------------------------------------------
-	enum class EInputAction
+
+	enum class EInputDeviceType
 	{
-		None = 0,
-		Pressed = 1,
-		Repeat = 2,
-		Released = 3
+		Unknown = 0,
+		Keyboard = 1,
+		Mouse = 2,
+		Gamepad = 3
 	};
+
+	//--------------------------------------------------
+	// All input type events (keyboard, gamepad, mouse, etc)
+	//--------------------------------------------------
 
 	struct FInputEvent
 	{
-		FInputEvent()
-			: m_modifierKeys( FModifierKeysState() )
-			, m_bIsRepeat( false )
+		FInputEvent( EInputAction action, FModifierKeyState modState, EInputDeviceType type )
+			: Action( action )
+			, ModifierState( modState )
+			, InputType( type )
 		{}
 
-		FInputEvent( const FModifierKeysState& modifierKeys, const bool isRepeat )
-			: m_modifierKeys( modifierKeys )
-			, m_bIsRepeat( isRepeat )
-		{}
-
-		virtual ~FInputEvent() {}
-
-	public:
-
-		bool IsRepeat() const { return m_bIsRepeat; }
-		const FModifierKeysState& GetModifierKeys() const { return m_modifierKeys; }
-
-		virtual bool IsCursorEvent() const { return false; }
-		virtual bool IsKeyEvent() const { return false; }
-
-	protected:
-		FModifierKeysState m_modifierKeys;
-		bool m_bIsRepeat;
-
+		EInputAction Action;
+		FModifierKeyState ModifierState;
+		EInputDeviceType InputType;
 	};
 
 	struct FKeyEvent : public FInputEvent
 	{
-		FKeyEvent()
-			: FInputEvent( FModifierKeysState(), false )
-			, m_inputAction(EInputAction::None)
-			, m_key()
-			, m_characterCode( 0 )
-			, m_keyCode( 0 )
-		{ }
-
-		FKeyEvent( const FKey& key, const FModifierKeysState& modifierKeys, const EInputAction inputAction, const bool bIsRepeat, const unsigned int charCode, const unsigned int keyCode )
-			: FInputEvent( modifierKeys, bIsRepeat )
-			, m_key( key )
-			, m_inputAction( inputAction )
-			, m_characterCode( charCode )
-			, m_keyCode( keyCode )
+		FKeyEvent( EKeyCode key, EInputAction action, FModifierKeyState modsState, int scancode )
+			: FInputEvent( action, modsState, EInputDeviceType::Keyboard )
+			, Key( key )
+			, ScanCode( scancode )
 		{}
 
-		FKey GetKey() const { return m_key; }
-		unsigned int GetCharacter() const { return m_characterCode; }
-		unsigned int GetKeyCode() const { return m_keyCode; }
-
-		virtual bool IsCursorEvent() const { return false; }
-		virtual bool IsKeyEvent() const { return true; }
-
-	private:
-		FKey m_key;
-		EInputAction m_inputAction;
-		unsigned int m_characterCode;
-		unsigned int m_keyCode;
+		EKeyCode Key;
+		int ScanCode;
 	};
 
-	struct FCursorEvent : public FInputEvent
+	struct FMouseEvent : public FInputEvent
 	{
-		FCursorEvent( const FKey& key, float xPos, float yPos )
-			: FInputEvent()
-			, m_key(key)
-			, m_fPosX(xPos)
-			, m_fPosY(yPos)
+		FMouseEvent( EMouseCode button, EInputAction action, FModifierKeyState modsState )
+			: FInputEvent( action, modsState, EInputDeviceType::Mouse )
+			, Button( button )
 		{}
 
-		FKey GetKey() const { return m_key; }
-		float GetPosX() const { return m_fPosX; }
-		float GetPosY() const { return m_fPosY; }
-
-		virtual bool IsCursorEvent() const { return true; }
-		virtual bool IsKeyEvent() const { return false; }
-
-	private:
-		FKey m_key;
-		float m_fPosX, m_fPosY;
+		EMouseCode Button;
 	};
 
 	//--------------------------------------------------

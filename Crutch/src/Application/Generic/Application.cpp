@@ -48,31 +48,16 @@ namespace Crutch {
 
 	void CApplication::OnInputEvent( FInputEvent& event )
 	{
-		if ( event.IsKeyEvent() )
+		if ( event.InputType == EInputDeviceType::Keyboard )
 		{
-			FKeyEvent& keyEvent = (FKeyEvent&)event;
-
-			// TODO Push event to layers
-
-			CH_CORE_LOG( "Event: {0}, Key name: {1}, Shift mod: {2}, Ctrl mod: {3}", 
-						  keyEvent.GetKeyCode(), 
-						  keyEvent.GetKey().GetName(), 
-						  keyEvent.GetModifierKeys().IsShiftDown(),
-						  keyEvent.GetModifierKeys().IsCtrlDown());
+			FKeyEvent& keyEvent = (FKeyEvent&) event;
+			CH_CORE_LOG( "Mouse input: {0}", keyEvent.Key );
 		}
-		else if ( event.IsCursorEvent() )
+		else if ( event.InputType == EInputDeviceType::Mouse )
 		{
-			FCursorEvent& cursorEvent = (FCursorEvent&) event;
-
-			// TODO Push event to layers
-
-			/*
-			CH_CORE_INFO( "Key name: {0}, Pox X: {1}, Pos Y: {2}",
-						  cursorEvent.GetKey().GetName(),
-						  cursorEvent.GetPosX(),
-						  cursorEvent.GetPosY());*/
+			FMouseEvent& mouseEvent = (FMouseEvent&)event;
+			CH_CORE_LOG( "Mouse input: {0}", mouseEvent.Button );
 		}
-		
 	}
 
 	void CApplication::OnWindowEvent( FWindowEvent& event )

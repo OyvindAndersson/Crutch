@@ -1,196 +1,201 @@
 #pragma once
-#include <map>
 
 namespace Crutch
 {
-
 	//--------------------------------------------------
-	// 
+	// Shared enums and state helpers
 	//--------------------------------------------------
-	struct FModifierKeysState
+	enum class EInputAction
 	{
-		FModifierKeysState()
-			: m_bIsLeftShiftDown(false)
-			, m_bIsRightShiftDown(false)
-			, m_bIsLeftCtrlDown(false)
-			, m_bIsRightCtrlDown(false)
-			, m_bIsLeftAltDown(false)
-			, m_bIsRightAltDown(false)
+		None = 0,
+		Pressed = 1,
+		Repeat = 2,
+		Released = 3
+	};
+
+	enum class EKeyCode
+	{
+		Any = -1,
+		// From Hazel KeyCodes.h
+		Space = 32,
+		Apostrophe = 39, /* ' */
+		Comma = 44, /* , */
+		Minus = 45, /* - */
+		Period = 46, /* . */
+		Slash = 47, /* / */
+
+		Zero = 48, /* 0 */
+		One = 49, /* 1 */
+		Two = 50, /* 2 */
+		Three = 51, /* 3 */
+		Four = 52, /* 4 */
+		Five = 53, /* 5 */
+		Six = 54, /* 6 */
+		Seven = 55, /* 7 */
+		Eight = 56, /* 8 */
+		Nine = 57, /* 9 */
+
+		Semicolon = 59, /* ; */
+		Equal = 61, /* = */
+
+		A = 65,
+		B = 66,
+		C = 67,
+		D = 68,
+		E = 69,
+		F = 70,
+		G = 71,
+		H = 72,
+		I = 73,
+		J = 74,
+		K = 75,
+		L = 76,
+		M = 77,
+		N = 78,
+		O = 79,
+		P = 80,
+		Q = 81,
+		R = 82,
+		S = 83,
+		T = 84,
+		U = 85,
+		V = 86,
+		W = 87,
+		X = 88,
+		Y = 89,
+		Z = 90,
+
+		LeftBracket = 91,  /* [ */
+		Backslash = 92,  /* \ */
+		RightBracket = 93,  /* ] */
+		GraveAccent = 96,  /* ` */
+
+		World1 = 161, /* non-US #1 */
+		World2 = 162, /* non-US #2 */
+
+		/* Function keys */
+		Escape = 256,
+		Enter = 257,
+		Tab = 258,
+		Backspace = 259,
+		Insert = 260,
+		Delete = 261,
+		Right = 262,
+		Left = 263,
+		Down = 264,
+		Up = 265,
+		PageUp = 266,
+		PageDown = 267,
+		Home = 268,
+		End = 269,
+		CapsLock = 280,
+		ScrollLock = 281,
+		NumLock = 282,
+		PrintScreen = 283,
+		Pause = 284,
+		F1 = 290,
+		F2 = 291,
+		F3 = 292,
+		F4 = 293,
+		F5 = 294,
+		F6 = 295,
+		F7 = 296,
+		F8 = 297,
+		F9 = 298,
+		F10 = 299,
+		F11 = 300,
+		F12 = 301,
+		F13 = 302,
+		F14 = 303,
+		F15 = 304,
+		F16 = 305,
+		F17 = 306,
+		F18 = 307,
+		F19 = 308,
+		F20 = 309,
+		F21 = 310,
+		F22 = 311,
+		F23 = 312,
+		F24 = 313,
+		F25 = 314,
+
+		/* Keypad */
+		KP_Zero = 320,
+		KP_One = 321,
+		KP_Two = 322,
+		KP_Three = 323,
+		KP_Four = 324,
+		KP_Five = 325,
+		KP_Six = 326,
+		KP_Seven = 327,
+		KP_Eight = 328,
+		KP_Nine = 329,
+		KP_Decimal = 330,
+		KP_Divide = 331,
+		KP_Multiply = 332,
+		KP_Subtract = 333,
+		KP_Add = 334,
+		KP_Enter = 335,
+		KP_Equal = 336,
+
+		LeftShift = 340,
+		LeftControl = 341,
+		LeftAlt = 342,
+		LeftSuper = 343,
+		RightShift = 344,
+		RightControl = 345,
+		RightAlt = 346,
+		RightSuper = 347,
+		Menu = 348
+	};
+
+	enum class EMouseCode
+	{
+		LeftButton = 0, 
+		RightButton = 1,	
+		MiddleButton = 2,
+		ThumbButton = 3,	// Back
+		ThumbButton2 = 4	// Fwd
+	};
+
+	struct FModifierKeyState
+	{
+		FModifierKeyState()
+			: m_bIsShiftDown(false)
+			, m_bIsCtrlDown(false)
+			, m_bIsAltDown(false)
 			, m_bAreCapsLocked(false)
 		{}
 
-		FModifierKeysState( bool leftShiftDown, bool rightShiftDown, bool leftCtrlDown, bool rightCtrlDown, bool leftAltDown, bool rightAltDown, bool capsLocked )
-			: m_bIsLeftShiftDown( leftShiftDown )
-			, m_bIsRightShiftDown( rightShiftDown )
-			, m_bIsLeftCtrlDown( leftCtrlDown )
-			, m_bIsRightCtrlDown( rightCtrlDown )
-			, m_bIsLeftAltDown( leftAltDown )
-			, m_bIsRightAltDown( rightAltDown )
+		FModifierKeyState(bool shiftDown, bool ctrlDown, bool bAltDown, bool capsLocked)
+			: m_bIsShiftDown( shiftDown )
+			, m_bIsCtrlDown( ctrlDown )
+			, m_bIsAltDown( bAltDown )
 			, m_bAreCapsLocked( capsLocked )
 		{}
 
-
-		bool IsShiftDown() const { return m_bIsLeftShiftDown || m_bIsRightShiftDown; }
-		bool IsCtrlDown() const { return m_bIsLeftCtrlDown || m_bIsRightCtrlDown; }
-		bool IsAltDown() const { return m_bIsLeftAltDown || m_bIsRightAltDown; }
-		bool AreCapsLocked() const { return m_bAreCapsLocked; }
-
 	private:
-		uint16_t m_bIsLeftShiftDown : 1;
-		uint16_t m_bIsRightShiftDown : 1;
-		
-		uint16_t m_bIsLeftCtrlDown : 1;
-		uint16_t m_bIsRightCtrlDown : 1;
-
-		uint16_t m_bIsLeftAltDown : 1;
-		uint16_t m_bIsRightAltDown : 1;
-
+		uint16_t m_bIsShiftDown : 1;
+		uint16_t m_bIsCtrlDown : 1;
+		uint16_t m_bIsAltDown : 1;
 		uint16_t m_bAreCapsLocked : 1;
 	};
 
 	//--------------------------------------------------
-	// 
+	// Singelton input manager
+	// Used to retrieve key/input state
 	//--------------------------------------------------
-	struct FKey
+	class CInput
 	{
-		enum EKeyFlags
-		{
-			GamepadKey  = 1 << 0,		// Any gamepad button
-			MouseButton = 1 << 1,		// Mouse buttons
-			Touch		= 1 << 2,		// Touch interfaces
-			ModifierKey = 1 << 3,		// Modifier keys, Alt, Shift, etc.
-			Axis1D		= 1 << 4,		// Single axis input (Left stick X, Left stick Y)
-			Axis2D		= 1 << 5,		// Two axes input (Left Stick, Right Stick)
-			Axis3D		= 1 << 6,		// I.e: Controller tilt sensor
+	public:
 
-			NoFlags		= 0,
-		};
+		static CInput& Get() { return *m_instance; }
 
-		FKey() {}
-		//FKey( const FKey& other ) { /*CH_CORE_LOG( "FKey copy" );*/ }
-		FKey( const std::string& name,uint32_t keyFlags = 0 );
-
-		bool IsModifierKey() const { return m_bIsModifierKey != 0; }
-		bool IsMouseButton() const { return m_bIsMouseButton != 0; }
-		bool IsAxis1D() const { return m_axisType == EInputAxisType::Axis1D; }
-		bool IsAxis2D() const { return m_axisType == EInputAxisType::Axis2D; }
-		bool IsAxis3D() const { return m_axisType == EInputAxisType::Axis3D; }
-
-		const std::string& GetName() const { return m_name; }
-
-		friend bool operator== ( const FKey& lhs, const FKey& rhs ) { return lhs.m_name == rhs.m_name; }
-		friend bool operator!= ( const FKey& lhs, const FKey& rhs ) { return lhs.m_name != rhs.m_name; }
+		bool IsKeyPressed( const EKeyCode& key );
+		//const FVector2D& GetMousePos();
 
 	private:
-		friend struct EKeys;
-		enum class EInputAxisType : uint8_t
-		{
-			None,
-			Button,
-			Axis1D,
-			Axis2D,
-			Axis3D,
-		};
-
-	private:
-		std::string m_name;
-
-		uint8_t m_bIsModifierKey : 1;
-		uint8_t m_bIsGamepadKey : 1;
-		uint8_t m_bIsTouch : 1;
-		uint8_t m_bIsMouseButton : 1;
-		EInputAxisType m_axisType;
+		static TSharedPtr<CInput> m_instance;
 	};
 
-	//--------------------------------------------------
-	// Basically an extended enum type to hold some
-	// additional data for each key
-	//--------------------------------------------------
-	struct EKeys
-	{
-		static const FKey AnyKey;		// GLFW_KEY_UNKNOWN -1
-		static const FKey Space;		// GLFW_KEY_SPACE 32
-
-		static const FKey MouseX;
-		static const FKey MouseY;
-		static const FKey Mouse2D;
-		static const FKey MouseScrollUp;
-		static const FKey MouseScrollDown;
-		static const FKey MouseScrollAxis;
-
-		static const FKey LeftMouseButton;
-		static const FKey RightMouseButton;
-		static const FKey MiddleMouseButton;
-		static const FKey ThumbMouseButton;
-		static const FKey ThumbMouseButton2;
-
-		static const FKey Zero;
-		static const FKey One;
-		static const FKey Two;
-		static const FKey Three;
-		static const FKey Four;
-		static const FKey Five;
-		static const FKey Six;
-		static const FKey Seven;
-		static const FKey Eight;
-		static const FKey Nine;
-
-		static const FKey A;
-		static const FKey B;
-		static const FKey C;
-		static const FKey D;
-		static const FKey E;
-		static const FKey F;
-		static const FKey G;
-		static const FKey H;
-		static const FKey I;
-		static const FKey J;
-		static const FKey K;
-		static const FKey L;
-		static const FKey M;
-		static const FKey N;
-		static const FKey O;
-		static const FKey P;
-		static const FKey Q;
-		static const FKey R;
-		static const FKey S;
-		static const FKey T;
-		static const FKey U;
-		static const FKey V;
-		static const FKey W;
-		static const FKey X;
-		static const FKey Y;
-		static const FKey Z;
-
-		FKey GetKeyFromCode( uint32_t keyCode );
-	};
-
-	//--------------------------------------------------
-	// 
-	//--------------------------------------------------
-	struct FInput
-	{
-		static FInput& Get() { return *s_Instance; }
-
-		void InitializeMappings();
-
-		FKey GetKeyFromCode( int keyCode ) const;
-		int32_t GetCodeFromKey( const FKey& key );
-
-		bool IsKeyPressed( const FKey& key );
-		float GetAxisValue( const FKey& key );
-		// glm::vec2 Get2DAxisValue( const FKey& key );
-		// glm::vec3 Get3DAxisValue( const FKey& key );
-
-	private:
-		FInput()
-		{
-			InitializeMappings();
-		}
-
-	private:
-		static TSharedPtr<FInput> s_Instance;
-		std::map<int32_t, FKey> m_keyMapping;
-		
-	};
 }
