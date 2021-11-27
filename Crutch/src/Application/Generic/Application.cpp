@@ -40,6 +40,20 @@ namespace Crutch {
 	{
 		CH_LOG("Application running");
 
+		float verticies[] = { 0.5f, 0.0f, -0.5f };
+
+		// Vertex buffer
+		unsigned int vbo_id;
+		glGenBuffers( 1, &vbo_id );
+
+		// Bind the buffer before setting data
+		glBindBuffer( GL_ARRAY_BUFFER, vbo_id );
+
+		// Load data into the buffer
+		glBufferData( GL_ARRAY_BUFFER, sizeof( verticies ), verticies, GL_STATIC_DRAW );
+
+		glAttri
+
 		while ( m_bIsRunning )
 		{
 			m_window->Update();
